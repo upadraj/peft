@@ -55,6 +55,18 @@ class TTLoraConfig(PeftConfig):
     )
     lora_alpha: int = field(default=8, metadata={"help": "Lora alpha"})
     lora_dropout: float = field(default=0.0, metadata={"help": "Lora dropout"})
+    target_modules: Optional[Union[list[str], str]] = field(
+        default=None,
+        metadata={
+            "help": (
+                "List of module names or regex expression of the module names to replace with LoRA."
+                "For example, ['q', 'v'] or '.*decoder.*(SelfAttention|EncDecAttention).*(q|v)$'."
+                "This can also be a wildcard 'all-linear' which matches all linear/Conv1D layers except the output layer."
+                "If not specified, modules will be chosen according to the model architecture, If the architecture is "
+                "not known, an error will be raised -- in this case, you should specify the target modules manually."
+            ),
+        },
+    )
 
     def to_dict(self):
         """
