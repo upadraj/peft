@@ -125,10 +125,12 @@ class TTLoraModel(BaseTuner):
         pattern_keys = list(chain(lora_config.rank_pattern.keys(), lora_config.alpha_pattern.keys()))
         target_name_key = next(filter(lambda key: re.match(rf".*\.{key}$", current_key), pattern_keys), current_key)
         r = lora_config.rank_pattern.get(target_name_key, lora_config.r)
+        tt_shape = lora_config.tt_shape
         alpha = lora_config.alpha_pattern.get(target_name_key, lora_config.lora_alpha)
 
         kwargs = {
             "r": r,
+            "tt_shape": tt_shape,
             "lora_alpha": alpha,
             "lora_dropout": lora_config.lora_dropout,
             "fan_in_fan_out": lora_config.fan_in_fan_out,

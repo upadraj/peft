@@ -40,9 +40,11 @@ class TTLoraLayer(BaseTunerLayer):
     def __init__(self, base_layer: nn.Module, ephemeral_gpu_offload: bool = False, **kwargs) -> None:
         self.base_layer = base_layer
         self.r = {}
+        self.tt_shape = {}
         self.lora_alpha = {}
         self.scaling = {}
         self.lora_dropout = nn.ModuleDict({})
+        
         self.lora_A = nn.ModuleDict({})
         self.lora_B = nn.ModuleDict({})
         # For Embedding layer
@@ -100,12 +102,13 @@ class TTLoraLayer(BaseTunerLayer):
         self.out_features = out_features
 
     def update_layer(
-        self, adapter_name, r, lora_alpha, lora_dropout, init_lora_weights):
+        self, adapter_name, r, tt_shape, lora_alpha, lora_dropout, init_lora_weights):
         # This code works for linear layers, override for other layer types
         if r <= 0:
             raise ValueError(f"`r` should be a positive integer value but the value passed is {r}")
 
         self.r[adapter_name] = r
+        self.tt_shape[adapter_name] = tt_shape
         self.lora_alpha[adapter_name] = lora_alpha
         if lora_dropout > 0.0:
             lora_dropout_layer = nn.Dropout(p=lora_dropout)
@@ -367,6 +370,7 @@ class Linear(nn.Module, TTLoraLayer):
         base_layer,
         adapter_name: str,
         r: int = 0,
+        tt_shape = [],
         lora_alpha: int = 1,
         lora_dropout: float = 0.0,
         fan_in_fan_out: bool = False,  # Set this to True if the layer to replace stores weight like (fan_in, fan_out)
@@ -384,6 +388,7 @@ class Linear(nn.Module, TTLoraLayer):
         self.update_layer(
             adapter_name,
             r,
+            tt_shape,
             lora_alpha=lora_alpha,
             lora_dropout=lora_dropout,
             init_lora_weights=init_lora_weights,
