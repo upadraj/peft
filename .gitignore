@@ -3,3 +3,4 @@ __pycache__/
 peft\__pycache__
 
 test.ipynb
+peft/tuners/lora/__pycache__/

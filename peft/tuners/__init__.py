@@ -19,7 +19,7 @@
 
 from .adaption_prompt import AdaptionPromptConfig, AdaptionPromptModel
 from .lora import LoraConfig, LoraModel, LoftQConfig, LoraRuntimeConfig
-from .tt_lora import TTLoraConfig
+from .tt_lora import TTLoraConfig, TTLoraModel, TTLoraLayer
 from .loha import LoHaConfig, LoHaModel
 from .lokr import LoKrConfig, LoKrModel
 from .ia3 import IA3Config, IA3Model

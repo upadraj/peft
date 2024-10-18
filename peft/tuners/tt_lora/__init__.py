@@ -13,7 +13,14 @@
 # limitations under the License.
 
 from .config import TTLoraConfig
+from .model import TTLoraModel
+from .layer import TTLoraLayer
+from .gptq import QuantLinear
 
 __all__ = [
     "TTLoraConfig",
+    "TTLoraLayer",
+    "TTLoraModel",
+    "QuantLinear",
+
 ]
