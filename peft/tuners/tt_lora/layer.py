@@ -100,8 +100,7 @@ class TTLoraLayer(BaseTunerLayer):
         self.out_features = out_features
 
     def update_layer(
-        self, adapter_name, r, lora_alpha, lora_dropout, init_lora_weights, use_rslora, use_dora: bool = False
-    ):
+        self, adapter_name, r, lora_alpha, lora_dropout, init_lora_weights):
         # This code works for linear layers, override for other layer types
         if r <= 0:
             raise ValueError(f"`r` should be a positive integer value but the value passed is {r}")
@@ -117,10 +116,7 @@ class TTLoraLayer(BaseTunerLayer):
         # Actual trainable parameters
         self.lora_A[adapter_name] = nn.Linear(self.in_features, r, bias=False)
         self.lora_B[adapter_name] = nn.Linear(r, self.out_features, bias=False)
-        if use_rslora:
-            self.scaling[adapter_name] = lora_alpha / math.sqrt(r)
-        else:
-            self.scaling[adapter_name] = lora_alpha / r
+        self.scaling[adapter_name] = lora_alpha / r
 
         # for inits that require access to the base weight, use gather_param_ctx so that the weight is gathered when using DeepSpeed
         if isinstance(init_lora_weights, str) and init_lora_weights.startswith("pissa"):
@@ -137,11 +133,6 @@ class TTLoraLayer(BaseTunerLayer):
         # call this before dora_init
         self._move_adapter_to_device_of_base_layer(adapter_name)
 
-        if use_dora:
-            self.dora_init(adapter_name)
-            self.use_dora[adapter_name] = True
-        else:
-            self.use_dora[adapter_name] = False
 
         self.set_adapter(self.active_adapters)
 
@@ -396,8 +387,6 @@ class Linear(nn.Module, TTLoraLayer):
             lora_alpha=lora_alpha,
             lora_dropout=lora_dropout,
             init_lora_weights=init_lora_weights,
-            use_rslora=use_rslora,
-            use_dora=use_dora,
         )
         self.is_target_conv_1d_layer = is_target_conv_1d_layer
 

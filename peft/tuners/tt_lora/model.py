@@ -156,8 +156,8 @@ class TTLoraModel(BaseTuner):
                 lora_alpha=alpha,
                 lora_dropout=lora_config.lora_dropout,
                 init_lora_weights=lora_config.init_lora_weights,
-                use_rslora=lora_config.use_rslora,
-                use_dora=lora_config.use_dora,
+                # use_rslora=lora_config.use_rslora,
+                # use_dora=lora_config.use_dora,
             )
         else:
             new_module = self._create_new_module(lora_config, adapter_name, target, **kwargs)
